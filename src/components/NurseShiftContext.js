@@ -1,4 +1,5 @@
-import React, {useState, useContext, useEffect, createContext} from 'react';
+import React, { useState, useContext, useEffect, createContext } from 'react';
+import ShiftSchedule from "./ShiftSchedule";
 
 const AppContext = createContext();
 
@@ -7,24 +8,36 @@ function AppProvider({ children }) {
     const [nurses, setNurses] = useState([]);
 
     useEffect(() => {
-        setShifts(fetchShifts());
-        setNurses(fetchNurses());
+        fetchShifts();
+        fetchNurses();
     }, []);
 
-    async function fetchShifts() {
-        try {
-            const response = await fetch('http://localhost:9001/shifts');
-            const shiftsArr = await response.json();
-            console.log(shiftsArr);
-            return [...shifts, shiftsArr];
-        }
-        catch(err) {
-            console.error(err);
-        }
+    function fetchShifts() {
+        return fetch('http://localhost:9001/shifts')
+            .then(response => {
+                if (response.ok) return response.json()
+                else throw new Error;
+            })
+            .then(shiftsArr => {
+                setShifts([...shifts, ...shiftsArr]);
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 
-    async function fetchNurses() {
-        return ['nurses'];
+    function fetchNurses() {
+        return fetch('http://localhost:9001/nurses')
+            .then(response => {
+                if (response.ok) return response.json()
+                else throw new Error;
+            })
+            .then(nursesArr => {
+                setNurses([...nurses, ...nursesArr]);
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 
     return (
