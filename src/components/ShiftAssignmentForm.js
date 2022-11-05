@@ -3,7 +3,7 @@ import {useGlobalContext} from "./NurseShiftContext";
 import {NurseOption, ShiftOption} from "./ShiftScheduleOptions";
 
 function ShiftAssignmentForm() {
-    const { shifts, nurses, saveShiftAssignment } = useGlobalContext();
+    const { shifts, nurses, saveShiftAssignment, isScheduleConflict, isNurseQualified } = useGlobalContext();
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
     const [shiftSelected, setShiftSelected] = useState("");
     const [nurseSelected, setNurseSelected] = useState("");
@@ -11,18 +11,34 @@ function ShiftAssignmentForm() {
     //resets shift and nurse selected and closes the form
     function handleSubmit(e) {
         e.preventDefault();
+
         const shiftOptions = e.target[0];
         const nurseOptions = e.target[1];
         let shiftSelectedId;
         let nurseSelectedId;
+
         for(let option of shiftOptions) {
-            if(option.selected) shiftSelectedId = option.value;
+            //shiftId is 1 off from shift option selected because indexing starts at 0
+            if(option.selected) shiftSelectedId = parseInt(option.value) - 1;
         }
+
         for(let option of nurseOptions) {
-            if(option.selected) nurseSelectedId = option.value;
+            if(option.selected) nurseSelectedId = parseInt(option.value);
         }
-        console.log(shiftSelectedId, nurseSelectedId)
-        saveShiftAssignment(shiftSelectedId, nurseSelectedId);
+
+        if(isScheduleConflict(shifts[shiftSelectedId].start, shifts[shiftSelectedId].end, nurseSelectedId)) {
+            alert("Error: This nurse is already working during the chosen shift.")
+        }
+        else if(!isNurseQualified(nurses[nurseSelectedId - 1].qualification, shifts[shiftSelectedId].qual_required)) {
+            alert("Error: This nurse isn't qualified to work the chosen shift." +
+                "\n\nA CNA can only work CNA shifts.\n" +
+                "An LPN can work CNA or LPN shifts.\n" +
+                "An RN can work CNA, LPN, or RN shifts")
+        }
+        else {
+            saveShiftAssignment(shiftSelectedId, nurseSelectedId);
+        }
+
         setShiftSelected("");
         setNurseSelected("");
         setIsComponentVisible(false);
