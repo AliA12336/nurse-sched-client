@@ -1,4 +1,4 @@
-import {useGlobalContext} from "./NurseShiftContext";
+import { useGlobalContext } from "./NurseShiftContext";
 
 function ShiftOption({shiftProps}) {
     const { formatDate } = useGlobalContext();

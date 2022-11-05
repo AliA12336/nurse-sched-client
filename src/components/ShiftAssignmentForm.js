@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from "react";
-import {useGlobalContext} from "./NurseShiftContext";
-import {NurseOption, ShiftOption} from "./ShiftScheduleOptions";
+import React, { useEffect, useRef, useState } from "react";
+import { useGlobalContext } from "./NurseShiftContext";
+import { NurseOption, ShiftOption } from "./ShiftScheduleOptions";
 
 function ShiftAssignmentForm() {
-    const { shifts, nurses, saveShiftAssignment, isScheduleConflict, isNurseQualified } = useGlobalContext();
+    const {shifts, nurses, saveShiftAssignment, isScheduleConflict, isNurseQualified} = useGlobalContext();
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
     const [shiftSelected, setShiftSelected] = useState("");
     const [nurseSelected, setNurseSelected] = useState("");
@@ -17,25 +17,23 @@ function ShiftAssignmentForm() {
         let shiftSelectedId;
         let nurseSelectedId;
 
-        for(let option of shiftOptions) {
+        for (let option of shiftOptions) {
             //shiftId is 1 off from shift option selected because indexing starts at 0
-            if(option.selected) shiftSelectedId = parseInt(option.value) - 1;
+            if (option.selected) shiftSelectedId = parseInt(option.value) - 1;
         }
 
-        for(let option of nurseOptions) {
-            if(option.selected) nurseSelectedId = parseInt(option.value);
+        for (let option of nurseOptions) {
+            if (option.selected) nurseSelectedId = parseInt(option.value);
         }
 
-        if(isScheduleConflict(shifts[shiftSelectedId].start, shifts[shiftSelectedId].end, nurseSelectedId)) {
+        if (isScheduleConflict(shifts[shiftSelectedId].start, shifts[shiftSelectedId].end, nurseSelectedId)) {
             alert("Error: This nurse is already working during the chosen shift.")
-        }
-        else if(!isNurseQualified(nurses[nurseSelectedId - 1].qualification, shifts[shiftSelectedId].qual_required)) {
+        } else if (!isNurseQualified(nurses[nurseSelectedId - 1].qualification, shifts[shiftSelectedId].qual_required)) {
             alert("Error: This nurse isn't qualified to work the chosen shift." +
                 "\n\nA CNA can only work CNA shifts.\n" +
                 "An LPN can work CNA or LPN shifts.\n" +
                 "An RN can work CNA, LPN, or RN shifts")
-        }
-        else {
+        } else {
             saveShiftAssignment(shiftSelectedId, nurseSelectedId);
         }
 
@@ -55,25 +53,37 @@ function ShiftAssignmentForm() {
     //conditionally renders the shift assignment form using custom function
     return (
         <div>
-            <button onClick={() => setIsComponentVisible(!isComponentVisible)}>
+            {/*
+            does not close when button is clicked again while open,
+            potential fix:
+            refactor code to use mui component instead of manual form
+            */}
+            <button id="assignmentButton" onClick={() => setIsComponentVisible(!isComponentVisible)}>
                 Set Shift Assignment
             </button>
             <div ref={ref}>
                 {isComponentVisible && (
-                    <form onSubmit={(e) => handleSubmit(e)}>
+                    <form id="shiftAssignmentForm" onSubmit={(e) => handleSubmit(e)}>
                         <header>Set Shift Assignment</header>
-                        <select id="shift" value={shiftSelected} onChange={(e) => handleShiftChange(e)}>
-                            <option/>
-                            {shifts.map((shiftProps) => (
-                                <ShiftOption key={shiftProps.id} shiftProps={shiftProps}/>
-                            ))}
-                        </select>
-                        <select id="nurse" value={nurseSelected} onChange={(e) => handleNurseChange(e)}>
-                            <option/>
-                            {nurses.map((nurseProps) => (
-                                <NurseOption key={nurseProps.id} nurseProps={nurseProps}/>
-                            ))}
-                        </select>
+                        <div id="shiftOption">
+                            <label>Shift</label>
+                            <select id="shift" value={shiftSelected} onChange={(e) => handleShiftChange(e)}>
+                                <option/>
+                                {shifts.map((shiftProps) => (
+                                    <ShiftOption key={shiftProps.id} shiftProps={shiftProps}/>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div id="nurseOption">
+                            <label>Nurse</label>
+                            <select id="nurse" value={nurseSelected} onChange={(e) => handleNurseChange(e)}>
+                                <option/>
+                                {nurses.map((nurseProps) => (
+                                    <NurseOption key={nurseProps.id} nurseProps={nurseProps}/>
+                                ))}
+                            </select>
+                        </div>
                         <button type="submit" disabled={!shiftSelected}>Save Assignment</button>
                     </form>)}
             </div>

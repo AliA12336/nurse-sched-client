@@ -1,22 +1,75 @@
+body {
+    margin: 0;
+    text-align: center;
+}
+
 table {
-    border: 2px solid forestgreen;
-    width: 800px;
-    height: 200px;
+    border: 2px solid #003d97;
+    width: 100%;
+    height: 100%;
 }
 
 th {
     border-bottom: 1px solid black;
+    border-right: 1px solid grey;
 }
 
 td {
     text-align: center;
 }
 
-.ShiftAssignmentForm {
+#assignmentButton {
+    background-color: #644eff;
+    color: #e6dcfd;
+    border: none;
+    width: 100%;
+    padding: 2%;
+}
+
+#shiftAssignmentForm {
+    display: flex;
+    flex-direction: column;
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 40%;
+    left: 40%;
     padding: 1rem;
     border-radius: 5px;
-    background-color: lightblue;
+    background-color: #2375bd;
+    color: #e6dcfd;
 }
+
+
+#shift {
+    margin-left: 1rem;
+    margin-top: 1rem;
+    width: 80%;
+}
+
+#nurse {
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    width: 80%;
+}
+
+/*
+for phone screen, positioning still needs fixing,
+solution may require multiple max width def's or refactor code to use mui component
+*/
+@media screen and (max-width: 799px) {
+    #shiftAssignmentForm {
+        position: fixed;
+        top: 20%;
+        left: 5%;
+    }
+
+    #shift {
+        width: 80%;
+    }
+
+    #nurse {
+        width: 80%;
+    }
+}
+
+

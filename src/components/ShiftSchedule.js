@@ -1,5 +1,5 @@
-import React, {useEffect} from "react";
-import {useGlobalContext} from "./NurseShiftContext";
+import React from "react";
+import { useGlobalContext } from "./NurseShiftContext";
 import Shift from "./Shift";
 
 function ShiftSchedule() {
