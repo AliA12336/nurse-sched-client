@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect, createContext } from 'react';
-import ShiftSchedule from "./ShiftSchedule";
 
 const AppContext = createContext();
 
@@ -16,7 +15,7 @@ function AppProvider({ children }) {
         return fetch('http://localhost:9001/shifts')
             .then(response => {
                 if (response.ok) return response.json()
-                else throw new Error;
+                else throw new Error();
             })
             .then(shiftsArr => {
                 setShifts([...shifts, ...shiftsArr]);
@@ -30,7 +29,7 @@ function AppProvider({ children }) {
         return fetch('http://localhost:9001/nurses')
             .then(response => {
                 if (response.ok) return response.json()
-                else throw new Error;
+                else throw new Error();
             })
             .then(nursesArr => {
                 setNurses([...nurses, ...nursesArr]);
@@ -40,9 +39,24 @@ function AppProvider({ children }) {
             })
     }
 
+    function formatDate(utcDate, needShiftTime) {
+        const date = new Date(utcDate);
+        const formattedDate = needShiftTime ? date.toLocaleTimeString() : date.toLocaleString();
+        return formattedDate;
+    }
+
+    function formatNurseName(nurse_id) {
+        for(let nurse of nurses) {
+            if(nurse.id === nurse_id) {
+                return nurse.first_name + " " + nurse.last_name + ", " + nurse.qualification;
+            }
+        }
+        return "";
+    }
+
     return (
         <AppContext.Provider
-            value = {{ shifts, nurses }}>
+            value = {{ shifts, nurses, formatDate, formatNurseName }}>
             {children}
         </AppContext.Provider>
     )

@@ -3,12 +3,14 @@ import {useGlobalContext} from "./NurseShiftContext";
 import Shift from "./Shift";
 
 function ShiftSchedule() {
-    const {shifts, nurses} = useGlobalContext();
+    const {shifts} = useGlobalContext();
 
-    //conditional rendering to prevent loading the shift schedule before
-    //async fetch has returned data
+    /*
+    conditional rendering to prevent loading the shift schedule before
+    async fetch has returned shift data
+    */
     return !shifts.length ? null : (
-        <div className="App">
+        <div>
             <table>
                 <thead>
                 <tr>
@@ -19,11 +21,12 @@ function ShiftSchedule() {
                     <th>Assigned nurse</th>
                 </tr>
                 </thead>
+
+                <tbody>
                 {shifts.map((shiftProps) => (
-                    <tbody>
                     <Shift key={shiftProps.id} shiftProps={shiftProps}/>
-                    </tbody>
                 ))}
+                </tbody>
             </table>
         </div>
     );
