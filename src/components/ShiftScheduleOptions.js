@@ -3,7 +3,7 @@ import {useGlobalContext} from "./NurseShiftContext";
 function ShiftOption({shiftProps}) {
     const { formatDate } = useGlobalContext();
     return (
-        <option>{
+        <option value={shiftProps.id}>{
                 shiftProps.name + ": " +
                 //passing in true to return date formatted with just the time returned
                 formatDate(shiftProps.start, true) +
@@ -18,7 +18,7 @@ function ShiftOption({shiftProps}) {
 function NurseOption({nurseProps}) {
     const { formatNurseName } = useGlobalContext();
     return (
-        <option>
+        <option value={nurseProps.id}>
             {formatNurseName(nurseProps.id)}
         </option>
     )

@@ -1,10 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
-import Shift from "./Shift";
 import {useGlobalContext} from "./NurseShiftContext";
 import {NurseOption, ShiftOption} from "./ShiftScheduleOptions";
 
 function ShiftAssignmentForm() {
-    const {shifts, nurses} = useGlobalContext();
+    const { shifts, nurses, saveShiftAssignment } = useGlobalContext();
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
     const [shiftSelected, setShiftSelected] = useState("");
     const [nurseSelected, setNurseSelected] = useState("");
@@ -12,10 +11,21 @@ function ShiftAssignmentForm() {
     //resets shift and nurse selected and closes the form
     function handleSubmit(e) {
         e.preventDefault();
+        const shiftOptions = e.target[0];
+        const nurseOptions = e.target[1];
+        let shiftSelectedId;
+        let nurseSelectedId;
+        for(let option of shiftOptions) {
+            if(option.selected) shiftSelectedId = option.value;
+        }
+        for(let option of nurseOptions) {
+            if(option.selected) nurseSelectedId = option.value;
+        }
+        console.log(shiftSelectedId, nurseSelectedId)
+        saveShiftAssignment(shiftSelectedId, nurseSelectedId);
         setShiftSelected("");
         setNurseSelected("");
         setIsComponentVisible(false);
-        console.log(e.target);
     }
 
     function handleShiftChange(e) {
