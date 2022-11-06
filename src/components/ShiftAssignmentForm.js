@@ -50,20 +50,18 @@ function ShiftAssignmentForm() {
         setNurseSelected(e.target.value);
     }
 
-    //conditionally renders the shift assignment form using custom function
+    //conditionally renders the shift assignment form using custom hook
     return (
         <div>
             {/*
-            does not close when button is clicked again while open,
-            potential fix:
-            refactor code to use mui component instead of manual form
+            //useref hook may need refactoring due to re-renderings, best practices(?)
             */}
-            <button id="assignmentButton" onClick={() => setIsComponentVisible(!isComponentVisible)}>
+            <button ref={ref} id="assignmentButton" onClick={() => setIsComponentVisible(!isComponentVisible)}>
                 Set Shift Assignment
             </button>
             <div ref={ref}>
                 {isComponentVisible && (
-                    <form id="shiftAssignmentForm" onSubmit={(e) => handleSubmit(e)}>
+                    <form ref={ref} id="shiftAssignmentForm" onSubmit={(e) => handleSubmit(e)}>
                         <header>Set Shift Assignment</header>
                         <div id="shiftOption">
                             <label>Shift</label>
