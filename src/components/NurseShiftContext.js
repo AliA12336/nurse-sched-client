@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, createContext } from 'react';
+import React, { useState, useContext, useEffect, createContext, useRef } from 'react';
 
 const AppContext = createContext();
 
@@ -126,6 +126,26 @@ function AppProvider({children}) {
         return false;
     }
 
+    //helper function to change visibility of a component
+    function useComponentVisible(initialIsVisible) {
+        const [isComponentVisible, setIsComponentVisible] = useState(initialIsVisible);
+        const ref = useRef(null);
+
+        useEffect(() => {
+            document.addEventListener('click', handleClickOutside, true);
+            return () => {
+                document.removeEventListener('click', handleClickOutside, true);
+            };
+        }, []);
+
+        function handleClickOutside(event) {
+            if (ref.current && !ref.current.contains(event.target)) {
+                setIsComponentVisible(false);
+            }
+        };
+        return {ref, isComponentVisible, setIsComponentVisible};
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -135,7 +155,8 @@ function AppProvider({children}) {
                 formatNurseName,
                 saveShiftAssignment,
                 isScheduleConflict,
-                isNurseQualified
+                isNurseQualified,
+                useComponentVisible
             }}
         >
             {children}

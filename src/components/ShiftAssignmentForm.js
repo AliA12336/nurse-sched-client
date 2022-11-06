@@ -3,7 +3,7 @@ import { useGlobalContext } from "./NurseShiftContext";
 import { NurseOption, ShiftOption } from "./ShiftScheduleOptions";
 
 function ShiftAssignmentForm() {
-    const {shifts, nurses, saveShiftAssignment, isScheduleConflict, isNurseQualified} = useGlobalContext();
+    const {shifts, nurses, saveShiftAssignment, isScheduleConflict, isNurseQualified, useComponentVisible} = useGlobalContext();
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
     const [shiftSelected, setShiftSelected] = useState("");
     const [nurseSelected, setNurseSelected] = useState("");
@@ -28,6 +28,7 @@ function ShiftAssignmentForm() {
 
         if (isScheduleConflict(shifts[shiftSelectedId].start, shifts[shiftSelectedId].end, nurseSelectedId)) {
             alert("Error: This nurse is already working during the chosen shift.")
+            //nurse selection id is 1 off from nurse option selected because indexing starts at 0
         } else if (!isNurseQualified(nurses[nurseSelectedId - 1].qualification, shifts[shiftSelectedId].qual_required)) {
             alert("Error: This nurse isn't qualified to work the chosen shift." +
                 "\n\nA CNA can only work CNA shifts.\n" +
@@ -61,7 +62,7 @@ function ShiftAssignmentForm() {
             </button>
             <div ref={ref}>
                 {isComponentVisible && (
-                    <form ref={ref} id="shiftAssignmentForm" onSubmit={(e) => handleSubmit(e)}>
+                    <form id="shiftAssignmentForm" ref={ref} onSubmit={(e) => handleSubmit(e)}>
                         <header>Set Shift Assignment</header>
                         <div id="shiftOption">
                             <label>Shift</label>
@@ -87,27 +88,6 @@ function ShiftAssignmentForm() {
             </div>
         </div>
     );
-}
-
-
-//helper function to change visibility of a component
-function useComponentVisible(initialIsVisible) {
-    const [isComponentVisible, setIsComponentVisible] = useState(initialIsVisible);
-    const ref = useRef(null);
-
-    useEffect(() => {
-        document.addEventListener('click', handleClickOutside, true);
-        return () => {
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, []);
-
-    function handleClickOutside(event) {
-        if (ref.current && !ref.current.contains(event.target)) {
-            setIsComponentVisible(false);
-        }
-    };
-    return {ref, isComponentVisible, setIsComponentVisible};
 }
 
 
